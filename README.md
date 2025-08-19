@@ -4,7 +4,7 @@
 ```bash
 conda env export | head -n -1 > environment.yml
 ```
-The `head -n -1` command removes the last line of text which is added by conda by default. It is a prefix label (e.g. ``)
+The `head -n -1` command removes the last line of text which is added by conda by default. It is a prefix label (e.g. `prefix: /path/to/miniconda3/envs/nn-pipelines`)
 
 ## Checking CUDA version on HPC
 On an HPC GPU node, if the `nvcc --version` command doesn't work, you might need to load the `cuda-toolkit/<version_num>` application into your node session with the following command
