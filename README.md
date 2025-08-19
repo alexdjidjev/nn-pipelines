@@ -1,6 +1,11 @@
 # nn-pipelines
 
-## Command to export conda environment to yml file
+## Create conda environment from yml file
+```bash
+conda create -f environment.yml
+``` 
+
+## Export conda environment to yml file
 ```bash
 conda env export | head -n -1 > environment.yml
 ```
