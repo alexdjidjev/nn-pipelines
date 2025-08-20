@@ -1,9 +1,11 @@
 # nn-pipelines
 
-## Create conda environment from yml file
+## Setup environment
+- Consists of two parts
 ```bash
 conda create -f environment.yml
 ``` 
+*Important:* Ensure that the yml file has the `--extra-index-url https://download.pytorch.org/whl/cu128` above the `torch` and `torchvision` pip dependencies.
 
 ## Export conda environment to yml file
 ```bash
