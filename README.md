@@ -1,13 +1,29 @@
 # nn-pipelines
 
 ## Setup environment
-- Consists of two parts
+Consists of two main parts: 
+- creating the conda environment and 
+- then installing pip dependencies
+
+This is done so as to install pytorch properly from the pytorch official website using pip.
+
+**1.** Create the conda environment with non-pip dependencies
 ```bash
 conda create -f environment.yml
 ``` 
-*Important:* Ensure that the yml file has the `--extra-index-url https://download.pytorch.org/whl/cu128` above the `torch` and `torchvision` pip dependencies.
+
+**2.** Install the pip dependencies 
+```bash
+pip install -r pip_requirements.txt
+```
+
+*Important:* Ensure that the `pip_requirements.txt` file has the `--extra-index-url https://download.pytorch.org/whl/cu128` above the `torch` and `torchvision` pip dependencies.
+
+
 
 ## Export conda environment to yml file
+Follow this if you need to add dependencies to the environment.
+
 ```bash
 conda env export | head -n -1 > environment.yml
 ```

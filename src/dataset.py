@@ -39,8 +39,8 @@ def load_data(path: str,
     Can modify this depending on dataset your using and its source.
     """
     df = pd.read_parquet(path)
-    feature_cols = df.columns[0:-1]
-    label_cols = df.columns[-1]
+    feature_cols = df.columns[5:] # will change per dataset
+    label_cols = df.columns[4] # will change per dataset
 
     X_train, X_test, y_train, y_test = \
     train_test_split(

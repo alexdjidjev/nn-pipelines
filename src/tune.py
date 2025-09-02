@@ -97,7 +97,7 @@ def objective(trial: optuna.Trial,
     validation_accuracies = []
     # Loop through the splits
     for fold, (train_ids, val_ids) in enumerate(splits):
-
+        print(f"gpu: {gpu_id}, fold: {fold}")
         # Creating a generator and setting its seed as the fold 
         # number so as to ensure that the random state of the 
         # generator starts from the beginning every fold and the 
@@ -113,13 +113,15 @@ def objective(trial: optuna.Trial,
             dataset,
             batch_size=batch_size,
             sampler=train_sampler,
-            num_workers=2
+            num_workers=4,
+            pin_memory=True
         )
         val_loader = DataLoader(
             dataset,
             batch_size=batch_size,
             sampler=val_sampler,
-            num_workers=2
+            num_workers=4,
+            pin_memory=True
         )
 
         # --- Model, Optimizer, and Loss ---
@@ -135,14 +137,15 @@ def objective(trial: optuna.Trial,
 
         optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
         criterion = nn.BCEWithLogitsLoss()
-
+        print(f"gpu: {gpu_id}, total_epochs: {epochs}")
         for epoch in range(epochs):
+            print(f"gpu: {gpu_id}, epoch: {epoch}")
             model.train()
             for batch_X, batch_y in train_loader:
                 batch_X, batch_y = batch_X.to(device), batch_y.to(device)
 
                 optimizer.zero_grad()
-                outputs = model(batch_X)
+                outputs = model(batch_X).squeeze()
                 # Calculate primary loss (i.e. w/o penalty loss)
                 loss = criterion(outputs, batch_y)
 
@@ -251,7 +254,7 @@ def main():
         "sampler": None
     }
 
-    mp.set_start_method('fork', force=True)
+    mp.set_start_method('spawn', force=True)
     
     # --- Load data ONCE in the main process ---
     X_train_tensor, X_test_tensor, y_train_tensor, y_test_tensor \
@@ -325,12 +328,14 @@ def main():
     final_train_loader = DataLoader(final_train_dataset,
                                     batch_size=best_params["batch_size"],
                                     shuffle=True,
-                                    num_workers=2
+                                    num_workers=4,
+                                    pin_memory=True
     )
     final_test_loader = DataLoader(final_test_dataset,
                                     batch_size=best_params["batch_size"],
                                     shuffle=False,
-                                    num_workers=2
+                                    num_workers=4,
+                                    pin_memory=True
     )
 
     # Getting input/output sizes
@@ -364,7 +369,7 @@ def main():
             batch_X, batch_y = batch_X.to(device), batch_y.to(device)
 
             final_optimizer.zero_grad()
-            outputs = final_model(batch_X)
+            outputs = final_model(batch_X).squeeze()
             # Calculate primary loss (i.e. w/o penalty loss)
             loss = final_criterion(outputs, batch_y)
 
